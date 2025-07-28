@@ -1,10 +1,6 @@
 // Vercel Serverless Function Entry Point
-import express from 'express';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const express = require('express');
+const { join } = require('path');
 
 // 创建Express应用
 const app = express();
@@ -212,4 +208,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-export default app;
+module.exports = app;
