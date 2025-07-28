@@ -1,6 +1,6 @@
 // Vercel Serverless Function Entry Point
-const express = require('express');
-const { join } = require('path');
+import express from 'express';
+import { join } from 'path';
 
 // 创建Express应用
 const app = express();
@@ -208,4 +208,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-module.exports = app;
+export default app;
