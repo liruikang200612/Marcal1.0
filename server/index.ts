@@ -36,44 +36,39 @@ app.use((req, res, next) => {
   next();
 });
 
-async function initializeApp() {
-  const server = await registerRoutes(app);
+// Global error handler
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Global error handler:', err);
+  const status = err.status || err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  res.status(status).json({ message });
+});
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+// Initialize routes
+const server = await registerRoutes(app);
 
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
-  } else {
+// Setup static file serving for production
+if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+  try {
     serveStatic(app);
+  } catch (error) {
+    console.warn('Static file serving setup failed:', error);
+    // Continue without static files for API-only mode
   }
-
-  return server;
+} else {
+  await setupVite(app, server);
 }
 
-// Initialize and start the application
-(async () => {
-  const server = await initializeApp();
-  
-  // For Vercel deployment, we don't start the server
-  if (!process.env.VERCEL) {
-    const port = parseInt(process.env.PORT || '5000', 10);
-    server.listen({
-      port,
-      host: "127.0.0.1",
-    }, () => {
-      log(`serving on port ${port}`);
-    });
-  }
-})();
+// For local development only
+if (!process.env.VERCEL && process.env.NODE_ENV !== "production") {
+  const port = parseInt(process.env.PORT || '5000', 10);
+  server.listen({
+    port,
+    host: "127.0.0.1",
+  }, () => {
+    log(`serving on port ${port}`);
+  });
+}
 
 // Export the app for Vercel
 export default app;
