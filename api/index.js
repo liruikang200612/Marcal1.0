@@ -1,13 +1,7 @@
 // Vercel serverless function entry point
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 let app = null;
 
-export default async (req, res) => {
+export default async function handler(req, res) {
   try {
     // Only initialize once
     if (!app) {
@@ -17,6 +11,10 @@ export default async (req, res) => {
       const serverModule = await import('../dist/index.js');
       app = serverModule.default;
       
+      if (!app) {
+        throw new Error('Failed to load app from server module');
+      }
+      
       console.log('App initialized successfully');
     }
     
@@ -24,10 +22,14 @@ export default async (req, res) => {
     return app(req, res);
   } catch (error) {
     console.error('Vercel function error:', error);
-    res.status(500).json({ 
-      error: 'Internal server error',
-      message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    });
+    
+    // Send error response
+    if (!res.headersSent) {
+      res.status(500).json({ 
+        error: 'Internal server error',
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
   }
-};
+}
