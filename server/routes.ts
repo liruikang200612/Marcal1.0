@@ -7,6 +7,25 @@ import { getWeatherData } from "./services/lunar";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ 
+      status: "ok", 
+      timestamp: new Date().toISOString(),
+      env: process.env.NODE_ENV,
+      vercel: !!process.env.VERCEL
+    });
+  });
+
+  // Root endpoint
+  app.get("/", (req, res) => {
+    res.json({ 
+      message: "MarCal API Server", 
+      status: "running",
+      timestamp: new Date().toISOString()
+    });
+  });
+  
   // Regions API
   app.get("/api/regions", async (req, res) => {
     try {
