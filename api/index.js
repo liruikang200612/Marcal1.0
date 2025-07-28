@@ -1,9 +1,13 @@
 // Vercel serverless function entry point
-const path = require('path');
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 let app = null;
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   try {
     // Only initialize once
     if (!app) {
