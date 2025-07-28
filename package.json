@@ -7,8 +7,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx -r dotenv/config server/index.ts",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "build:vercel": "node build-fix.js",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build:vercel": "node build-for-vercel.js",
     "deploy:vercel": "node deploy-vercel.js",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "check": "tsc",
