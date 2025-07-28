@@ -13,8 +13,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 静态文件服务
-app.use(express.static(join(__dirname, '..', 'dist', 'public')));
+// 静态文件服务 - Vercel环境中的路径
+const publicPath = process.env.VERCEL 
+  ? join(process.cwd(), 'dist', 'public')
+  : join(__dirname, '..', 'dist', 'public');
+app.use(express.static(publicPath));
 
 // API路由
 app.get('/api/health', (req, res) => {
@@ -45,17 +48,26 @@ app.get('/api/regions', (req, res) => {
 
 // 主页路由 - 直接显示营销日历应用
 app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, '..', 'dist', 'public', 'index.html'));
+  const indexPath = process.env.VERCEL 
+    ? join(process.cwd(), 'dist', 'public', 'index.html')
+    : join(__dirname, '..', 'dist', 'public', 'index.html');
+  res.sendFile(indexPath);
 });
 
 // 测试页面路由
 app.get('/test', (req, res) => {
-  res.sendFile(join(__dirname, '..', 'public', 'test.html'));
+  const testPath = process.env.VERCEL 
+    ? join(process.cwd(), 'public', 'test.html')
+    : join(__dirname, '..', 'public', 'test.html');
+  res.sendFile(testPath);
 });
 
 // 所有其他路由返回主页（SPA路由支持）
 app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, '..', 'dist', 'public', 'index.html'));
+  const indexPath = process.env.VERCEL 
+    ? join(process.cwd(), 'dist', 'public', 'index.html')
+    : join(__dirname, '..', 'dist', 'public', 'index.html');
+  res.sendFile(indexPath);
 });
 
 // 获取特定地区的足球文化信息
