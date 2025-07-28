@@ -2,14 +2,14 @@
   "version": 2,
   "buildCommand": "npm run build:vercel",
   "functions": {
-    "api/index.js": {
+    "api/index.mjs": {
       "runtime": "@vercel/node@3"
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/api/index.mjs"
     }
   ],
   "env": {
